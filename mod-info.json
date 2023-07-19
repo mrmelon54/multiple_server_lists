@@ -1,0 +1,10 @@
+{
+  "modid": "multiple_server_lists",
+  "modname": "Multiple Server Lists",
+  "modclass": "MultipleServerLists",
+  "modgroup": "com.mrmelon54.MultipleServerLists",
+  "moddesc": "Add more server lists",
+  "modwebsite": "https://mrmelon54.com/minecraft/multiple-server-lists",
+  "modsource": "https://github.com/MrMelon54/multiple_server_lists",
+  "modissue": "https://github.com/MrMelon54/multiple_server_lists/issues"
+}

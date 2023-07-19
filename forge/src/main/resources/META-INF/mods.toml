@@ -1,0 +1,33 @@
+modLoader = "javafml"
+loaderVersion = "[46,)"
+issueTrackerURL = "https://github.com/MrMelon54/multiple_server_lists/issues"
+license = "GPL-3.0-only"
+
+[[mods]]
+modId = "multiple_server_lists"
+version = "${version}"
+displayName = "Multiple Server Lists"
+authors = "MrMelon54"
+description = "Add more server lists"
+logoFile = "/icon.png"
+
+[[dependencies.multiple_server_lists]]
+modId = "forge"
+mandatory = true
+versionRange = "[46,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.multiple_server_lists]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.multiple_server_lists]]
+modId = "architectury"
+mandatory = true
+versionRange = "[9.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
