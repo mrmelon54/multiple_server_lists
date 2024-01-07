@@ -1,0 +1,7 @@
+{
+  "text.autoconfig.multiple-server-lists.title": "Multiple Server Lists",
+  "text.autoconfig.multiple-server-lists.option.showTabs": "Show Tabs?",
+  "multiple-server-lists.screen.edit-list-name.title": "Edit Server List Name",
+  "multiple-server-lists.screen.edit-list-name.button.rename": "Rename",
+  "multiple-server-lists.screen.edit-list-name.button.cancel": "Cancel"
+}

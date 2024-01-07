@@ -26,6 +26,9 @@
     "entrypoints": {
       "init": [
         "com.mrmelon54.MultipleServerLists.quilt.MultipleServerListsQuilt"
+      ],
+      "modmenu": [
+        "com.mrmelon54.MultipleServerLists.fabriclike.ModMenuIntegration"
       ]
     },
     "depends": [
@@ -39,7 +42,7 @@
       },
       {
         "id": "minecraft",
-        "version": ">=1.20"
+        "version": "1.20.x"
       },
       {
         "id": "architectury",
