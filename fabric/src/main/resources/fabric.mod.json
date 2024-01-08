@@ -14,7 +14,7 @@
   },
   "license": "GPL-3.0-only",
   "icon": "icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "com.mrmelon54.MultipleServerLists.fabric.MultipleServerListsFabric"
