@@ -1,6 +1,6 @@
 modLoader = "javafml"
-loaderVersion = "[46,)"
-issueTrackerURL = "https://github.com/MrMelon54/multiple_server_lists/issues"
+loaderVersion = "*"
+issueTrackerURL = "https://github.com/mrmelon54/multiple_server_lists/issues"
 license = "GPL-3.0-only"
 
 [[mods]]
@@ -8,26 +8,26 @@ modId = "multiple_server_lists"
 version = "${version}"
 displayName = "Multiple Server Lists"
 authors = "MrMelon54"
-description = "Add more server lists"
+description = "${description}"
 logoFile = "/icon.png"
-
-[[dependencies.multiple_server_lists]]
-modId = "forge"
-mandatory = true
-versionRange = "[46,)"
-ordering = "NONE"
-side = "BOTH"
 
 [[dependencies.multiple_server_lists]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20,)"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.multiple_server_lists]]
 modId = "architectury"
 mandatory = true
-versionRange = "[9.0.0,)"
+versionRange = "[${architectury_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.multiple_server_lists]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[${cloth_config_version},)"
 ordering = "AFTER"
 side = "BOTH"

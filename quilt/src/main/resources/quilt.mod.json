@@ -10,14 +10,14 @@
     "version": "${version}",
     "metadata": {
       "name": "Multiple Server Lists",
-      "description": "Add more server lists",
+      "description": "${description}",
       "contributors": {
         "MrMelon54": "Owner"
       },
       "contact": {
         "homepage": "https://mrmelon54.com/minecraft/multiple-server-lists",
-        "sources": "https://github.com/MrMelon54/multiple_server_lists",
-        "issues": "https://github.com/MrMelon54/multiple_server_lists/issues"
+        "sources": "https://github.com/mrmelon54/multiple_server_lists",
+        "issues": "https://github.com/mrmelon54/multiple_server_lists/issues"
       },
       "license": "GPL-3.0-only",
       "icon": "icon.png"
@@ -42,11 +42,15 @@
       },
       {
         "id": "minecraft",
-        "version": "1.20.x"
+        "version": "${minecraft_version}"
       },
       {
         "id": "architectury",
-        "version": ">=9.0.0"
+        "version": ">=${architectury_version}"
+      },
+      {
+        "id": "cloth-config",
+        "version": ">=${cloth_config_version}"
       }
     ]
   },
