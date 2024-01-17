@@ -6,8 +6,14 @@ import com.mrmelon54.MultipleServerLists.util.CustomFileServerList;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ServerList;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.renderer.texture.atlas.SpriteSource;
+import net.minecraft.client.renderer.texture.atlas.SpriteSourceList;
+import net.minecraft.client.renderer.texture.atlas.SpriteSources;
+import net.minecraft.client.resources.model.AtlasSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

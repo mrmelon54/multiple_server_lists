@@ -5,10 +5,12 @@ import com.mrmelon54.MultipleServerLists.duck.MultiplayerScreenDuckProvider;
 import com.mrmelon54.MultipleServerLists.duck.ServerEntryDuckProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.screens.multiplayer.ServerSelectionList;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -24,7 +26,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Mixin(AbstractSelectionList.class)
-public abstract class AbstractSelectionListMixin<E> implements EntryListWidgetDuckProvider {
+public abstract class AbstractSelectionListMixin<E> extends AbstractContainerWidget implements EntryListWidgetDuckProvider {
+    public AbstractSelectionListMixin(int i, int j, int k, int l, Component component) {
+        super(i, j, k, l, component);
+    }
+
     @Shadow
     public abstract int getMaxScroll();
 
@@ -37,10 +43,6 @@ public abstract class AbstractSelectionListMixin<E> implements EntryListWidgetDu
     @Shadow
     protected abstract int getRowBottom(int i);
 
-    @Shadow
-    protected int y0;
-    @Shadow
-    protected int y1;
     @Shadow
     @Final
     protected int itemHeight;
@@ -79,7 +81,7 @@ public abstract class AbstractSelectionListMixin<E> implements EntryListWidgetDu
         for (int j = 0; j < i; ++j) {
             int k = this.getRowTop(j);
             int l = this.getRowBottom(j);
-            if (l < this.y0 || k > this.y1) continue;
+            if (l < getY() || k > getBottom()) continue;
 
             int n = this.itemHeight - 4;
             E entry = this.children.get(j);
@@ -137,14 +139,14 @@ public abstract class AbstractSelectionListMixin<E> implements EntryListWidgetDu
 
     @Unique
     private int multiple_server_lists$getEntryIndex(double y) {
-        int m = Mth.floor(y - (double) y0) - headerHeight + (int) getScrollAmount() - 4;
+        int m = Mth.floor(y - (double) getY()) - headerHeight + (int) getScrollAmount() - 4;
         return m / this.itemHeight;
     }
 
     @Unique
     @Nullable
     private E multiple_server_lists$getEntryAtOffsetY(double y) {
-        int m = Mth.floor(y - (double) y0) - headerHeight - (int) getScrollAmount() - 4;
+        int m = Mth.floor(y - (double) getY()) - headerHeight - (int) getScrollAmount() - 4;
         int n = m / this.itemHeight;
         return n >= 0 && m >= 0 && n < this.getItemCount() ? this.children.get(n) : null;
     }

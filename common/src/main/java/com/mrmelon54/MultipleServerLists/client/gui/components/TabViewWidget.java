@@ -8,12 +8,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +25,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> {
-    private static final ResourceLocation SERVER_TABS_TEXTURE = new ResourceLocation("multiple-server-lists", "textures/gui/server_tabs.png");
+    private static final WidgetSprites LEFT_ARROW_BUTTON = new WidgetSprites(new ResourceLocation("multiple-server-lists", "left_arrow"), new ResourceLocation("multiple-server-lists", "left_arrow_disabled"), new ResourceLocation("multiple-server-lists", "left_arrow_highlight"));
+    private static final WidgetSprites RIGHT_ARROW_BUTTON = new WidgetSprites(new ResourceLocation("multiple-server-lists", "right_arrow"), new ResourceLocation("multiple-server-lists", "right_arrow_disabled"), new ResourceLocation("multiple-server-lists", "right_arrow_highlight"));
+    private static final WidgetSprites ADD_BUTTON = new WidgetSprites(new ResourceLocation("multiple-server-lists", "add"), new ResourceLocation("multiple-server-lists", "add_highlight"));
+    private static final WidgetSprites TAB_SPRITE = new WidgetSprites(new ResourceLocation("multiple-server-lists", "tab"), new ResourceLocation("multiple-server-lists", "tab_disabled"), new ResourceLocation("multiple-server-lists", "tab_highlight"));
     private final ItemStack featherStack;
     private List<CustomFileServerList> serverLists;
     private ScrollableRegion scrollRegion;
@@ -36,21 +38,20 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
     private final Button editServerListNameButton;
 
     public TabViewWidget(Minecraft mc, Screen screen, int width, int top) {
-        super(mc, width, 20, top, top + 20, 20);
+        super(mc, width, 20, top, 20);
         setRenderBackground(false);
         setRenderHeader(false, 0);
-        setRenderTopAndBottom(false);
-        setRenderSelection(true);
         reloadTabList();
         featherStack = new ItemStack(Items.FEATHER);
 
         scrollToSelectedTab();
 
-        this.scrollLeft = new ImageButton(0, top, 20, 20, 0, 80, 20, SERVER_TABS_TEXTURE, button -> scrollRegion.scrollLeft());
-        this.scrollRight = new ImageButton(width - 60, top, 20, 20, 20, 80, 20, SERVER_TABS_TEXTURE, button -> scrollRegion.scrollRight());
-        this.addTab = new ImageButton(width - 40, top, 20, 20, 40, 80, 20, SERVER_TABS_TEXTURE, button -> {
+        this.scrollLeft = new ImageButton(0, top, 20, 20, LEFT_ARROW_BUTTON, button -> scrollRegion.scrollLeft());
+        this.scrollRight = new ImageButton(width - 60, top, 20, 20, RIGHT_ARROW_BUTTON, button -> scrollRegion.scrollRight());
+        this.addTab = new ImageButton(width - 40, top, 20, 20, ADD_BUTTON, button -> {
             List<TabWidget> children = children();
-            int n = children.get(children.size() - 1).list.index();
+            // prevents crash with the vanilla tab
+            int n = children.size() == 1 ? 0 : children.get(children.size() - 1).list.index();
             CustomFileServerList list = new CustomFileServerList(mc, n + 1);
             serverLists.add(list);
             list.save();
@@ -113,7 +114,7 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         int startX = scrollRegion.startScrollableX();
         List<TabWidget> children = children();
         int selectedTab = MultipleServerLists.getTab();
@@ -125,9 +126,9 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
             // true if part of the tab is visible
             boolean tabIsVisible = w <= scrollRegion.viewWidth && w + a >= 0;
             if (tabIsVisible) {
-                boolean hovered = mouseY >= y0 && mouseY < y1 && scrollRegion.isHovered(mouseX) && mouseX >= w && mouseX < w + a;
+                boolean hovered = mouseY >= getY() && mouseY < getBottom() && scrollRegion.isHovered(mouseX) && mouseX >= w && mouseX < w + a;
                 child.selected = selectedTab == i;
-                child.render(guiGraphics, i, y0, w, a, 20, mouseX, mouseY, hovered, delta);
+                child.render(guiGraphics, i, getY(), w, a, 20, mouseX, mouseY, hovered, delta);
             }
             w += a;
         }
@@ -136,51 +137,43 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
         guiGraphics.pose().translate(0, 0, 50);
         if (scrollRegion.needsScroll()) {
             // scroll left button
-            if (scrollRegion.canScrollLeft()) scrollLeft.render(guiGraphics, mouseX, mouseY, delta);
-            else guiGraphics.blit(SERVER_TABS_TEXTURE, 0, y0, 0, 60, 20, 20, 256, 256);
+            scrollLeft.active = scrollRegion.canScrollLeft();
+            scrollLeft.render(guiGraphics, mouseX, mouseY, delta);
 
             // scroll right button
-            if (scrollRegion.canScrollRight()) scrollRight.render(guiGraphics, mouseX, mouseY, delta);
-            else guiGraphics.blit(SERVER_TABS_TEXTURE, width - 60, y0, 20, 60, 20, 20, 256, 256);
+            scrollRight.active = scrollRegion.canScrollRight();
+            scrollRight.render(guiGraphics, mouseX, mouseY, delta);
         }
         addTab.render(guiGraphics, mouseX, mouseY, delta);
-        if (selectedTab > 0) editServerListNameButton.render(guiGraphics, mouseX, mouseY, delta);
-        else {
-            guiGraphics.blit(Button.WIDGETS_LOCATION, width - 20, y0, 0, 46, 10, 20);
-            guiGraphics.blit(Button.WIDGETS_LOCATION, width - 10, y0, 200 - 10, 46, 10, 20);
-        }
-        if (featherStack != null) guiGraphics.renderFakeItem(featherStack, width - 18, y0 + 2);
+        editServerListNameButton.active = selectedTab > 0;
+        editServerListNameButton.render(guiGraphics, mouseX, mouseY, delta);
+        if (featherStack != null) guiGraphics.renderFakeItem(featherStack, width - 18, getY() + 2);
         guiGraphics.pose().popPose();
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         // ignore clicks outside the component
-        if (mouseY < y0 || mouseY >= y1) return false;
+        if (mouseY < getY() || mouseY >= getBottom()) return false;
 
         if (scrollRegion.needsScroll()) {
             // click left scroll
-            if (this.scrollLeft.isMouseOver(mouseX, mouseY))
-                return this.scrollLeft.mouseClicked(mouseX, mouseY, button);
+            if (this.scrollLeft.isMouseOver(mouseX, mouseY)) return this.scrollLeft.mouseClicked(mouseX, mouseY, button);
             // click right scroll
-            if (this.scrollRight.isMouseOver(mouseX, mouseY))
-                return this.scrollRight.mouseClicked(mouseX, mouseY, button);
+            if (this.scrollRight.isMouseOver(mouseX, mouseY)) return this.scrollRight.mouseClicked(mouseX, mouseY, button);
         }
 
         // add tab
-        if (this.addTab.isMouseOver(mouseX, mouseY))
-            return this.addTab.mouseClicked(mouseX, mouseY, button);
+        if (this.addTab.isMouseOver(mouseX, mouseY)) return this.addTab.mouseClicked(mouseX, mouseY, button);
         // rename button
-        if (this.editServerListNameButton.isMouseOver(mouseX, mouseY))
-            return this.editServerListNameButton.mouseClicked(mouseX, mouseY, button);
+        if (this.editServerListNameButton.isMouseOver(mouseX, mouseY)) return this.editServerListNameButton.mouseClicked(mouseX, mouseY, button);
 
         int x = (int) mouseX - scrollRegion.startScrollableX();
 
         // find clicked child
         List<TabWidget> children = children();
         for (TabWidget child : children)
-            if (x >= child.start && x < child.start + child.getActualWidth())
-                return child.mouseClicked(mouseX, mouseY, button);
+            if (x >= child.start && x < child.start + child.getActualWidth()) return child.mouseClicked(mouseX, mouseY, button);
         return super.mouseClicked(mouseX, mouseY, button);
 
     }
@@ -294,18 +287,9 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
 
         @Override
         public void render(GuiGraphics guiGraphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, SERVER_TABS_TEXTURE);
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             int w = getActualWidth();
             int wLeft = Mth.floorDiv(w, 2);
-            int wRight = wLeft + w % 2;
-            int i = selected ? 0 : hovered ? 2 : 1;
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.enableDepthTest();
-            guiGraphics.blit(SERVER_TABS_TEXTURE, x, y, 0, i * 20, wLeft, entryHeight);
-            guiGraphics.blit(SERVER_TABS_TEXTURE, x + wLeft, y, 200 - wRight, i * 20, wRight, entryHeight);
+            guiGraphics.blitSprite(TAB_SPRITE.get(!selected, hovered), x, y, w, entryHeight);
             guiGraphics.drawCenteredString(minecraft.font, message, x + wLeft, y + (height - 8) / 2, 0xffffffff);
         }
 

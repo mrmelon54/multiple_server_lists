@@ -61,7 +61,7 @@ public class CustomFileServerList extends ServerList {
             getInternalHiddenServers().clear();
 
             if (makeSureFolderExists()) {
-                CompoundTag compoundTag = NbtIo.read(new File(serversWrapperFolder, "servers" + pageIndex + ".dat"));
+                CompoundTag compoundTag = NbtIo.read(new File(serversWrapperFolder, "servers" + pageIndex + ".dat").toPath());
                 if (compoundTag == null)
                     return;
 
@@ -103,10 +103,10 @@ public class CustomFileServerList extends ServerList {
 
                 String n = "servers" + pageIndex;
                 File tempFile = File.createTempFile(n, ".dat", this.serversWrapperFolder);
-                NbtIo.write(compoundTag, tempFile);
+                NbtIo.write(compoundTag, tempFile.toPath());
                 File serversDatOld = new File(this.serversWrapperFolder, n + ".dat_old");
                 File serversDat = new File(this.serversWrapperFolder, n + ".dat");
-                Util.safeReplaceFile(serversDat, tempFile, serversDatOld);
+                Util.safeReplaceFile(serversDat.toPath() , tempFile.toPath(), serversDatOld.toPath());
             }
         } catch (Exception var6) {
             LOGGER.error("Couldn't save server list", var6);
