@@ -63,12 +63,14 @@ public class JoinMultiplayerScreenMixin extends Screen implements MultiplayerScr
             multiple_server_lists$tabsWidget = addRenderableWidget(new TabViewWidget(minecraft, this, width, 32));
         else {
             addRenderableWidget(Button.builder(Component.literal("<"), (button) -> {
+                button.setFocused(false);
                 multiple_server_lists$currentTab--;
                 if (serverSelectionList instanceof EntryListWidgetDuckProvider entryListWidgetDuckProvider)
                     entryListWidgetDuckProvider.multiple_server_lists$resetScrollPosition();
                 multiple_server_lists$reloadServerList();
             }).bounds(0, 0, 20, 20).build());
             addRenderableWidget(Button.builder(Component.literal(">"), (button) -> {
+                button.setFocused(false);
                 multiple_server_lists$currentTab++;
                 if (serverSelectionList instanceof EntryListWidgetDuckProvider entryListWidgetDuckProvider)
                     entryListWidgetDuckProvider.multiple_server_lists$resetScrollPosition();

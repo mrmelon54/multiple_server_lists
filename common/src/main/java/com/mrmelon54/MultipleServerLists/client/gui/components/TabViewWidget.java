@@ -44,8 +44,6 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
         reloadTabList();
         featherStack = new ItemStack(Items.FEATHER);
 
-        scrollToSelectedTab();
-
         this.scrollLeft = new ImageButton(0, top, 20, 20, LEFT_ARROW_BUTTON, button -> scrollRegion.scrollLeft());
         this.scrollRight = new ImageButton(width - 60, top, 20, 20, RIGHT_ARROW_BUTTON, button -> scrollRegion.scrollRight());
         this.addTab = new ImageButton(width - 40, top, 20, 20, ADD_BUTTON, button -> {
@@ -86,8 +84,11 @@ public class TabViewWidget extends ObjectSelectionList<TabViewWidget.TabWidget> 
     }
 
     public void reloadTabList() {
+        int save = scrollRegion != null ? scrollRegion.scrollX : 0;
         serverLists = MultipleServerLists.getTabServerList();
         refresh();
+        scrollRegion.scrollX = save;
+        scrollToSelectedTab();
     }
 
     public void refresh() {

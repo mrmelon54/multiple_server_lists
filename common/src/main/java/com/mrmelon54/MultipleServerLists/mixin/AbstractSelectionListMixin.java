@@ -67,6 +67,7 @@ public abstract class AbstractSelectionListMixin<E> extends AbstractContainerWid
 
     @Shadow
     private double scrollAmount;
+
     @Unique
     private Runnable multiple_server_lists$refreshCallback;
 
@@ -100,19 +101,18 @@ public abstract class AbstractSelectionListMixin<E> extends AbstractContainerWid
         E pEntry = this.multiple_server_lists$getEntryAtOffsetY(mouseY);
         if (pEntry == null) return;
 
-        boolean isScrollable = this.getMaxScroll() > 0;
-        int t = this.getRowWidth();
-        int u = isScrollable ? t + 6 : t;
-        double v = mouseX - this.getRowLeft();
         if (!(this.minecraft.screen instanceof MultiplayerScreenDuckProvider duckProvider)) return;
 
+        boolean isScrollable = this.getMaxScroll() > 0;
+        int t = this.getRowLeft() + this.getRowWidth() + (isScrollable ? 6 : 0);
+        int u = this.getRowLeft() - 6;
         int q = 0;
-        if (v < 0 && v > -16) q = -1;
-        else if (v > u && v < u + 16) q = 1;
+        if (mouseX < u && mouseX >= u - 14) q = -1;
+        else if (mouseX >= t && mouseX < t + 14) q = 1;
 
         if (q == 0) return;
         ServerList firstServerList = duckProvider.multiple_server_lists$getServerListForTab(duckProvider.multiple_server_lists$getCurrentTab());
-        if (pIdx < 0 || pIdx >= firstServerList.size()) return; // has invalid server
+        if (pIdx < 0 || pIdx > firstServerList.size()) return; // has invalid server
 
         ServerList secondServerList = duckProvider.multiple_server_lists$getServerListForTab(duckProvider.multiple_server_lists$getCurrentTab() + q);
         if (firstServerList != null && secondServerList != null) {
