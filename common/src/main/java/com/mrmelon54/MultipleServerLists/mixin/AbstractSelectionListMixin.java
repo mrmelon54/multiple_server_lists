@@ -68,15 +68,29 @@ public abstract class AbstractSelectionListMixin<E> extends AbstractContainerWid
     @Shadow
     private double scrollAmount;
 
+    @Shadow
+    protected abstract int getScrollbarPosition();
+
     @Unique
     private Runnable multiple_server_lists$refreshCallback;
+
+    @Unique
+    private E multiple_server_lists$getEntryAtPosition(double d, double e) {
+        int i = this.getRowWidth() / 2;
+        int j = this.getX() + this.width / 2;
+        int k = j - i;
+        int l = j + i;
+        int m = Mth.floor(e - (double) this.getY()) - this.headerHeight + (int) this.getScrollAmount() - 4;
+        int n = m / this.itemHeight;
+        return d < (double) this.getScrollbarPosition() && d >= (double) k && d <= (double) l && n >= 0 && m >= 0 && n < this.getItemCount() ? this.children.get(n) : null;
+    }
 
     @Inject(method = "renderList", at = @At("TAIL"))
     private void injectedRenderList(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         //noinspection ConstantConditions
         if (!(((Object) this) instanceof ServerSelectionList)) return;
 
-        E pEntry = this.multiple_server_lists$getEntryAtOffsetY(mouseY);
+        E entryAtPosition = multiple_server_lists$getEntryAtPosition(mouseX, mouseY);
         boolean isScrollable = this.getMaxScroll() > 0;
         int i = this.getItemCount();
         for (int j = 0; j < i; ++j) {
@@ -89,7 +103,7 @@ public abstract class AbstractSelectionListMixin<E> extends AbstractContainerWid
             int o = this.getRowWidth();
             int r = this.getRowLeft();
             if (entry instanceof ServerEntryDuckProvider serverEntryDuckProvider)
-                serverEntryDuckProvider.multiple_server_lists$extendedRender(guiGraphics, j, k, r, o, n, mouseX, mouseY, Objects.equals(pEntry, entry), delta, isScrollable);
+                serverEntryDuckProvider.multiple_server_lists$extendedRender(guiGraphics, j, k, r, o, n, mouseX, mouseY, Objects.equals(entryAtPosition, entry), delta, isScrollable);
         }
     }
 
